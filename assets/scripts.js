@@ -4,6 +4,7 @@
 
 const apiKey = "4276724bedf2ea6571466085854c6336";
 const apiCountryURL = "https://countryflagsapi.com/png/";
+const apiUnsplash = "https://source.unsplash.com/1600x1900/?";
 
 const cityInput = document.querySelector('#city-input');
 const searchBtn = document.querySelector('#search');
@@ -18,21 +19,55 @@ const windElement = document.querySelector('#wind span');
 
 const weatherContainer = document.querySelector("#weather-data");
 
+const errorMessageContainer = document.querySelector("#error-message");
+
+const loader = document.querySelector("#loader");
+
+const suggestionsContainer = document.querySelector("#suggestions");
+const suggestionsButtons = document.querySelectorAll("#suggestions button");
 
 
 //funcoes
 
+const togglerLoader = () => {
+    loader.classList.toggle("hide");
+}
+
 const getWeatherData = async(city) => {
+    togglerLoader();
+
     const apiWeatherURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}&lang=pt_br`;
 
     const res = await fetch(apiWeatherURL);
     const data = await res.json();
 
+    togglerLoader();
+
     return data;
+
+}
+
+
+const showErrorMessage = () => {
+    errorMessageContainer.classList.remove('hide');
+}
+
+const hideInformation = () => {
+    errorMessageContainer.classList.add('hide');
+    weatherContainer.classList.add('hide');
+
+    suggestionsContainer.classList.add('hide');
 }
 
 const showWeatherData = async(city) => {
+    hideInformation();
+
     const data = await getWeatherData(city);
+
+    if(data.cod === "404"){
+        showErrorMessage();
+        return;
+    }
 
     cityElement.innerText = data.name;
     tempElement.innerText = parseInt(data.main.temp);
@@ -41,6 +76,10 @@ const showWeatherData = async(city) => {
     countryElement.setAttribute("src", apiCountryURL + data.sys.country);
     humidityElement.innerText = `${data.main.humidity}%`;
     windElement.innerText = `${data.wind.speed}km/h`;
+
+    //mudar img de background
+
+    document.body.style.backgroundImage = `url("${apiUnsplash + city}")`
 
     weatherContainer.classList.remove('hide');
 };
@@ -64,3 +103,12 @@ cityInput.addEventListener("keyup", (e) => {
         showWeatherData(city);
     }
 });
+
+suggestionsButtons.forEach((btn) => {
+
+    btn.addEventListener("click", () => {
+
+        const city = btn.getAttribute("id");
+        showWeatherData(city);
+    })
+})

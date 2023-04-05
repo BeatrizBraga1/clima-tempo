@@ -13,7 +13,6 @@ const cityElement = document.querySelector('#city');
 const tempElement = document.querySelector('#temperature span');
 const descElement = document.querySelector('#description');
 const weatherIconElement = document.querySelector('#weather-icon');
-const countryElement = document.querySelector('#country');
 const humidityElement = document.querySelector('#umidity span');
 const windElement = document.querySelector('#wind span');
 
@@ -73,7 +72,6 @@ const showWeatherData = async(city) => {
     tempElement.innerText = parseInt(data.main.temp);
     descElement.innerText = data.weather[0].description;
     weatherIconElement.setAttribute("src", `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`);
-    countryElement.setAttribute("src", apiCountryURL + data.sys.country);
     humidityElement.innerText = `${data.main.humidity}%`;
     windElement.innerText = `${data.wind.speed}km/h`;
 
